@@ -15,3 +15,6 @@ coverage/
 # OS / editor / logs
 .DS_Store
 *.log
+
+# Local-only Vietnamese progress notes
+PROGRESS.vi.md
