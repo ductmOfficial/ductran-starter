@@ -7,7 +7,7 @@ import base from "./base.js";
 
 export default defineConfig(base, {
   files: ["**/*.{ts,tsx}"],
-  extends: [eslintReact.configs["recommended-type-checked"]],
+  extends: [eslintReact.configs["strict-type-checked"]],
   languageOptions: {
     globals: globals.browser,
   },
