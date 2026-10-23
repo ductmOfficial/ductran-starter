@@ -34,7 +34,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 | 1   | Turborepo + pnpm workspace + shared tsconfig            | `chore/setup-monorepo`    | ✅ merged to main |
 | 2   | Shared ESLint + Prettier                                | `chore/setup-lint-format` | ✅ merged to main |
 | 3   | Vitest + Testing Library, sample component and test     | `feat/ui-testing`         | ✅ merged to main |
-| 4   | GitHub Actions: lint, typecheck, test, build on each PR | —                         | ⬜                |
+| 4   | GitHub Actions: lint, typecheck, test, build on each PR | `ci/github-actions`       | 🔄 in progress    |
 | 5   | Docker Compose for local PostgreSQL                     | —                         | ⬜                |
 | 6   | Conventional Commits (commitlint), PR & issue templates | —                         | ⬜                |
 | 7   | README: structure and how to run                        | —                         | ⬜                |
@@ -80,13 +80,16 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - [x] 3.5 Coverage with `@vitest/coverage-v8`
 - [x] 3.6 Run the full pipeline through Turbo (clean run 1.8s, cached 6ms), commit `feat(ui): add UI package with Vitest and Testing Library` and merge
 
-### Step 4 — CI ⬜
+### Step 4 — CI 🔄
 
-- [ ] **Prerequisite:** create the GitHub repo, add the remote, push `main`
-- [ ] Workflow running lint, typecheck, test, build, `format:check` on each PR
-- [ ] Cache the pnpm store and Turbo
-- [ ] Open a real PR to see CI run
-- [ ] (Optional) Branch protection: require CI to pass before merging
+- [x] GitHub repo created: `ductmOfficial/ductran-starter` (public, empty)
+- [x] Implementation plan drafted
+- [x] 4.1 Add the remote (SSH alias `github-ductmofficial`) and push `main`
+- [x] 4.2 Workflow `.github/workflows/ci.yml`: install, `format:check`, lint, typecheck, test, build
+- [x] 4.3 Cache the pnpm store and the Turbo cache; ESLint `--max-warnings=0`
+- [ ] 4.4 Open a real PR, watch CI go green, break it on purpose to see it go red
+- [ ] 4.5 Ruleset on `main`: require a PR and a passing CI check
+- [ ] 4.6 Merge the PR through GitHub
 
 ### Step 5 — Local PostgreSQL ⬜
 
@@ -110,23 +113,24 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 
 ## Decisions
 
-| Decision                                          | Reason                                                                                                |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Node 24 LTS                                       | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines`  |
-| TypeScript 6.0.x instead of 7.0                   | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                 |
-| No Corepack                                       | Node 25+ no longer bundles Corepack                                                                   |
-| Internal package scope `@repo/*`                  | Turborepo convention; keeps the repo usable as a template                                             |
-| `@eslint-react` instead of `eslint-plugin-react`  | `eslint-plugin-react` does not support ESLint 10 yet                                                  |
-| React ESLint preset `strict-type-checked`         | Matches the strict TypeScript preset; `recommended` misses rules such as `dom-no-missing-button-type` |
-| No `eslint-plugin-react-hooks`                    | `@eslint-react` already ships the hooks rules; using both reports every issue twice                   |
-| Prettier `printWidth: 100`, other options default | The default of 80 wraps JSX too aggressively                                                          |
-| No Co-Authored-By trailer in commits              | Maintainer's preference                                                                               |
+| Decision                                                         | Reason                                                                                                     |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Node 24 LTS                                                      | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines`       |
+| TypeScript 6.0.x instead of 7.0                                  | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                      |
+| No Corepack                                                      | Node 25+ no longer bundles Corepack                                                                        |
+| Internal package scope `@repo/*`                                 | Turborepo convention; keeps the repo usable as a template                                                  |
+| `@eslint-react` instead of `eslint-plugin-react`                 | `eslint-plugin-react` does not support ESLint 10 yet                                                       |
+| React ESLint preset `strict-type-checked`                        | Matches the strict TypeScript preset; `recommended` misses rules such as `dom-no-missing-button-type`      |
+| No `eslint-plugin-react-hooks`                                   | `@eslint-react` already ships the hooks rules; using both reports every issue twice                        |
+| Prettier `printWidth: 100`, other options default                | The default of 80 wraps JSX too aggressively                                                               |
+| GitHub Actions pinned to commit SHAs (with a `# vX.Y.Z` comment) | A tag can be moved to point at different code; a SHA cannot. Protects CI from a compromised action release |
+| No Co-Authored-By trailer in commits                             | Maintainer's preference                                                                                    |
 
 ## Follow-ups
 
 - [ ] Upgrade to **Node 26** once it becomes LTS
 - [ ] Upgrade to **TypeScript 7** once typescript-eslint supports it
-- [ ] Step 4: decide whether CI runs ESLint with `--max-warnings=0` (warnings currently do not fail lint)
+- [ ] Add Dependabot for GitHub Actions so the pinned SHAs get update PRs
 - [ ] `tsc` does not delete stale files in `dist/`; consider a clean step before `build` if a source file is renamed or removed
 - [ ] (Optional) Update local Node from 24.21.0 to 24.22.0
 
@@ -138,3 +142,4 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - **2026-10-22:** the two React plugins reported every hooks rule twice. Fixed by dropping `eslint-plugin-react-hooks`.
 - **2026-10-22:** the `recommended-type-checked` React preset did not flag a `<button>` without `type`. Switched to `strict-type-checked`.
 - **2026-10-22:** Turbo warned that `test` produced no files for `outputs: ["coverage/**"]`. Set `test` outputs to `[]`; coverage gets its own task in 3.5.
+- **2026-10-23:** `git@github.com` authenticates as `ductmbbx` (default key), not the repo owner `ductmOfficial`. The machine already has an SSH alias `github-ductmofficial` for that account, so the remote uses `git@github-ductmofficial:ductmOfficial/ductran-starter.git`.
