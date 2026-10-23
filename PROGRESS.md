@@ -87,7 +87,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - [x] 4.1 Add the remote (SSH alias `github-ductmofficial`) and push `main`
 - [x] 4.2 Workflow `.github/workflows/ci.yml`: install, `format:check`, lint, typecheck, test, build
 - [x] 4.3 Cache the pnpm store and the Turbo cache; ESLint `--max-warnings=0`
-- [ ] 4.4 Open a real PR, watch CI go green, break it on purpose to see it go red
+- [x] 4.4 PR #1 opened; CI green → red (deliberate `cx` bug, 4 tests failed) → green after revert
 - [ ] 4.5 Ruleset on `main`: require a PR and a passing CI check
 - [ ] 4.6 Merge the PR through GitHub
 
@@ -143,3 +143,4 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - **2026-10-22:** the `recommended-type-checked` React preset did not flag a `<button>` without `type`. Switched to `strict-type-checked`.
 - **2026-10-22:** Turbo warned that `test` produced no files for `outputs: ["coverage/**"]`. Set `test` outputs to `[]`; coverage gets its own task in 3.5.
 - **2026-10-23:** `git@github.com` authenticates as `ductmbbx` (default key), not the repo owner `ductmOfficial`. The machine already has an SSH alias `github-ductmofficial` for that account, so the remote uses `git@github-ductmofficial:ductmOfficial/ductran-starter.git`.
+- **2026-10-23:** after reverting the deliberate bug, CI got `FULL TURBO` (5/5 tasks cached): the reverted files hash exactly like the first green run, so Turbo reused its outputs.
