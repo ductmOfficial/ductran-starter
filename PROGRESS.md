@@ -1,6 +1,6 @@
 # Progress — Phase 0: Repo template
 
-> Last updated: 2026-10-22
+> Last updated: 2026-10-23
 >
 > Legend: ✅ done · 🔄 in progress · ⏳ awaiting review · ⬜ not started
 
@@ -33,7 +33,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 | 0   | Environment check (Node, pnpm, Git, Docker)             | —                         | ✅                |
 | 1   | Turborepo + pnpm workspace + shared tsconfig            | `chore/setup-monorepo`    | ✅ merged to main |
 | 2   | Shared ESLint + Prettier                                | `chore/setup-lint-format` | ✅ merged to main |
-| 3   | Vitest + Testing Library, sample component and test     | —                         | ⬜                |
+| 3   | Vitest + Testing Library, sample component and test     | `feat/ui-testing`         | ✅ merged to main |
 | 4   | GitHub Actions: lint, typecheck, test, build on each PR | —                         | ⬜                |
 | 5   | Docker Compose for local PostgreSQL                     | —                         | ⬜                |
 | 6   | Conventional Commits (commitlint), PR & issue templates | —                         | ⬜                |
@@ -69,13 +69,16 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - [x] Commit `chore: add shared ESLint and Prettier configs`
 - [x] Merged into `main`
 
-### Step 3 — Testing ⬜
+### Step 3 — Testing ✅
 
-- [ ] Create `packages/ui` (React component library, built with `tsc`)
-- [ ] Vitest + jsdom + Testing Library
-- [ ] Sample component and test
-- [ ] `test`, `typecheck`, `build` scripts for `ui`
-- [ ] Commit and merge
+- [x] Branch `feat/ui-testing` created from `main`
+- [x] Implementation plan drafted
+- [x] 3.1 Scaffold `packages/ui` (package.json, tsconfig, build with `tsc`)
+- [x] 3.2 Sample `Button` component + ESLint config for `ui`
+- [x] 3.3 Vitest + jsdom, first plain test
+- [x] 3.4 Testing Library + jest-dom + user-event, `Button` tests
+- [x] 3.5 Coverage with `@vitest/coverage-v8`
+- [x] 3.6 Run the full pipeline through Turbo (clean run 1.8s, cached 6ms), commit `feat(ui): add UI package with Vitest and Testing Library` and merge
 
 ### Step 4 — CI ⬜
 
@@ -107,21 +110,24 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 
 ## Decisions
 
-| Decision                                          | Reason                                                                                               |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Node 24 LTS                                       | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines` |
-| TypeScript 6.0.x instead of 7.0                   | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                |
-| No Corepack                                       | Node 25+ no longer bundles Corepack                                                                  |
-| Internal package scope `@repo/*`                  | Turborepo convention; keeps the repo usable as a template                                            |
-| `@eslint-react` instead of `eslint-plugin-react`  | `eslint-plugin-react` does not support ESLint 10 yet                                                 |
-| No `eslint-plugin-react-hooks`                    | `@eslint-react` already ships the hooks rules; using both reports every issue twice                  |
-| Prettier `printWidth: 100`, other options default | The default of 80 wraps JSX too aggressively                                                         |
-| No Co-Authored-By trailer in commits              | Maintainer's preference                                                                              |
+| Decision                                          | Reason                                                                                                |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Node 24 LTS                                       | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines`  |
+| TypeScript 6.0.x instead of 7.0                   | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                 |
+| No Corepack                                       | Node 25+ no longer bundles Corepack                                                                   |
+| Internal package scope `@repo/*`                  | Turborepo convention; keeps the repo usable as a template                                             |
+| `@eslint-react` instead of `eslint-plugin-react`  | `eslint-plugin-react` does not support ESLint 10 yet                                                  |
+| React ESLint preset `strict-type-checked`         | Matches the strict TypeScript preset; `recommended` misses rules such as `dom-no-missing-button-type` |
+| No `eslint-plugin-react-hooks`                    | `@eslint-react` already ships the hooks rules; using both reports every issue twice                   |
+| Prettier `printWidth: 100`, other options default | The default of 80 wraps JSX too aggressively                                                          |
+| No Co-Authored-By trailer in commits              | Maintainer's preference                                                                               |
 
 ## Follow-ups
 
 - [ ] Upgrade to **Node 26** once it becomes LTS
 - [ ] Upgrade to **TypeScript 7** once typescript-eslint supports it
+- [ ] Step 4: decide whether CI runs ESLint with `--max-warnings=0` (warnings currently do not fail lint)
+- [ ] `tsc` does not delete stale files in `dist/`; consider a clean step before `build` if a source file is renamed or removed
 - [ ] (Optional) Update local Node from 24.21.0 to 24.22.0
 
 ## Issue log
@@ -130,3 +136,5 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - **2026-10-20:** Compose was missing until Docker Desktop was opened for the first time.
 - **2026-10-21:** `git switch main` failed because `main` had no commits yet, so it did not really exist. Fixed with `git switch -c main chore/setup-monorepo`.
 - **2026-10-22:** the two React plugins reported every hooks rule twice. Fixed by dropping `eslint-plugin-react-hooks`.
+- **2026-10-22:** the `recommended-type-checked` React preset did not flag a `<button>` without `type`. Switched to `strict-type-checked`.
+- **2026-10-22:** Turbo warned that `test` produced no files for `outputs: ["coverage/**"]`. Set `test` outputs to `[]`; coverage gets its own task in 3.5.
