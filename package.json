@@ -18,10 +18,14 @@
     "db:down": "docker compose down",
     "db:reset": "docker compose down --volumes",
     "db:logs": "docker compose logs --follow db",
-    "db:psql": "docker compose exec db psql"
+    "db:psql": "docker compose exec db psql",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@repo/prettier-config": "workspace:*",
+    "husky": "^9.1.7",
     "prettier": "^3.9.10",
     "turbo": "^2.11.9",
     "typescript": "~6.0.3"
