@@ -1,6 +1,6 @@
 # Progress — Phase 0: Repo template
 
-> Last updated: 2026-10-23
+> Last updated: 2026-10-26
 >
 > Legend: ✅ done · 🔄 in progress · ⏳ awaiting review · ⬜ not started
 
@@ -37,7 +37,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 | 4   | GitHub Actions: lint, typecheck, test, build on each PR | `ci/github-actions`       | ✅ merged to main |
 | 5   | Docker Compose for local PostgreSQL                     | `chore/local-postgres`    | ✅ merged to main |
 | 6   | Conventional Commits (commitlint), PR & issue templates | `chore/conventions`       | ✅ merged to main |
-| 7   | README: structure and how to run                        | —                         | ⬜                |
+| 7   | README: structure and how to run                        | `docs/readme`             | ✅ merged to main |
 
 ## Details
 
@@ -109,11 +109,16 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - [x] Issue forms: bug report, feature request; blank issues disabled
 - [x] Commit, PR, CI green, merge (rebase)
 
-### Step 7 — README ⬜
+### Step 7 — README ✅
 
-- [ ] Introduction, folder structure, environment requirements
-- [ ] How to install and run each command
-- [ ] How to use this repo as a template for a new project
+- [x] Introduction, tool overview, requirements
+- [x] Getting started, every script, project structure, how the pipeline works
+- [x] Contributing workflow and how to start a new project from this template
+- [x] Verified on a fresh clone from GitHub: install, hooks, build, test, lint, typecheck, format
+- [x] Repository marked as a GitHub template, description added
+- [x] Commit, PR, CI green, merge (rebase)
+
+**Phase 0 complete.**
 
 ## Decisions
 
