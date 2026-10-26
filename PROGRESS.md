@@ -36,7 +36,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 | 3   | Vitest + Testing Library, sample component and test     | `feat/ui-testing`         | ✅ merged to main |
 | 4   | GitHub Actions: lint, typecheck, test, build on each PR | `ci/github-actions`       | ✅ merged to main |
 | 5   | Docker Compose for local PostgreSQL                     | `chore/local-postgres`    | ✅ merged to main |
-| 6   | Conventional Commits (commitlint), PR & issue templates | —                         | ⬜                |
+| 6   | Conventional Commits (commitlint), PR & issue templates | `chore/conventions`       | ✅ merged to main |
 | 7   | README: structure and how to run                        | —                         | ⬜                |
 
 ## Details
@@ -100,12 +100,14 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 - [x] 5.3 Verify: connect with `psql`, data survives a restart, `db:reset` wipes it
 - [x] 5.4 Commit, open a PR, CI green, merge (rebase)
 
-### Step 6 — Conventions ⬜
+### Step 6 — Conventions ✅
 
-- [ ] commitlint + `@commitlint/config-conventional`
-- [ ] Git hook that checks commit messages
-- [ ] `.github/pull_request_template.md`
-- [ ] `.github/ISSUE_TEMPLATE/` (bug, feature)
+- [x] commitlint 21 + `@commitlint/config-conventional` (`commitlint.config.mjs`); existing history passes
+- [x] husky 9 `commit-msg` hook (installed by the root `prepare` script); a bad message is rejected locally
+- [x] CI lints every commit of a pull request and the PR title (title passed via env var to avoid script injection)
+- [x] `.github/pull_request_template.md`
+- [x] Issue forms: bug report, feature request; blank issues disabled
+- [x] Commit, PR, CI green, merge (rebase)
 
 ### Step 7 — README ⬜
 
@@ -115,24 +117,26 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 
 ## Decisions
 
-| Decision                                                         | Reason                                                                                                                                |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Node 24 LTS                                                      | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines`                                  |
-| TypeScript 6.0.x instead of 7.0                                  | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                                                 |
-| No Corepack                                                      | Node 25+ no longer bundles Corepack                                                                                                   |
-| Internal package scope `@repo/*`                                 | Turborepo convention; keeps the repo usable as a template                                                                             |
-| `@eslint-react` instead of `eslint-plugin-react`                 | `eslint-plugin-react` does not support ESLint 10 yet                                                                                  |
-| React ESLint preset `strict-type-checked`                        | Matches the strict TypeScript preset; `recommended` misses rules such as `dom-no-missing-button-type`                                 |
-| No `eslint-plugin-react-hooks`                                   | `@eslint-react` already ships the hooks rules; using both reports every issue twice                                                   |
-| Prettier `printWidth: 100`, other options default                | The default of 80 wraps JSX too aggressively                                                                                          |
-| PostgreSQL `postgres:18` (Debian), port bound to `127.0.0.1`     | Latest stable major (19 is still RC); Debian matches typical glibc production hosts; the database is not exposed to the local network |
-| GitHub Actions pinned to commit SHAs (with a `# vX.Y.Z` comment) | A tag can be moved to point at different code; a SHA cannot. Protects CI from a compromised action release                            |
-| No Co-Authored-By trailer in commits                             | Maintainer's preference                                                                                                               |
+| Decision                                                            | Reason                                                                                                                                |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Node 24 LTS                                                         | Node 26 is not LTS yet (expected late Oct 2026). Upgrading later only touches `.nvmrc` and `engines`                                  |
+| TypeScript 6.0.x instead of 7.0                                     | typescript-eslint only supports `<6.1.0`, and TS 7 has no stable programmatic API yet                                                 |
+| No Corepack                                                         | Node 25+ no longer bundles Corepack                                                                                                   |
+| Internal package scope `@repo/*`                                    | Turborepo convention; keeps the repo usable as a template                                                                             |
+| `@eslint-react` instead of `eslint-plugin-react`                    | `eslint-plugin-react` does not support ESLint 10 yet                                                                                  |
+| React ESLint preset `strict-type-checked`                           | Matches the strict TypeScript preset; `recommended` misses rules such as `dom-no-missing-button-type`                                 |
+| No `eslint-plugin-react-hooks`                                      | `@eslint-react` already ships the hooks rules; using both reports every issue twice                                                   |
+| Prettier `printWidth: 100`, other options default                   | The default of 80 wraps JSX too aggressively                                                                                          |
+| Conventions enforced twice: husky hook locally and commitlint in CI | Hooks can be skipped (`--no-verify`) or missing on a fresh clone; CI cannot                                                           |
+| PostgreSQL `postgres:18` (Debian), port bound to `127.0.0.1`        | Latest stable major (19 is still RC); Debian matches typical glibc production hosts; the database is not exposed to the local network |
+| GitHub Actions pinned to commit SHAs (with a `# vX.Y.Z` comment)    | A tag can be moved to point at different code; a SHA cannot. Protects CI from a compromised action release                            |
+| No Co-Authored-By trailer in commits                                | Maintainer's preference                                                                                                               |
 
 ## Follow-ups
 
 - [ ] Upgrade to **Node 26** once it becomes LTS
 - [ ] Upgrade to **TypeScript 7** once typescript-eslint supports it
+- [ ] The PR title check runs on open/push only; editing the title alone does not re-run CI (would need the `edited` event)
 - [ ] Add Dependabot for GitHub Actions so the pinned SHAs get update PRs
 - [ ] `tsc` does not delete stale files in `dist/`; consider a clean step before `build` if a source file is renamed or removed
 - [ ] (Optional) Update local Node from 24.21.0 to 24.22.0
