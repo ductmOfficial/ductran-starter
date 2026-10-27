@@ -30,5 +30,6 @@
     "turbo": "^2.11.9",
     "typescript": "~6.0.3"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/prettier-config",
+  "license": "MIT"
 }

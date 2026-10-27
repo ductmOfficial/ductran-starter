@@ -126,3 +126,7 @@ Run a script in one package with a filter, e.g. `pnpm --filter @repo/ui test:wat
 ## Progress
 
 The step-by-step build log, with the reasoning behind each decision and the issues met along the way, is in [PROGRESS.md](PROGRESS.md).
+
+## License
+
+[MIT](LICENSE) © 2026 Duc Tran
