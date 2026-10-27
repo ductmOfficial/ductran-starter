@@ -1,6 +1,6 @@
 # Progress — Phase 0: Repo template
 
-> Last updated: 2026-10-26
+> Last updated: 2026-10-27
 >
 > Legend: ✅ done · 🔄 in progress · ⏳ awaiting review · ⬜ not started
 
@@ -135,6 +135,7 @@ This is **phase 0** of a GitHub portfolio roadmap. It builds a **repo template**
 | Conventions enforced twice: husky hook locally and commitlint in CI | Hooks can be skipped (`--no-verify`) or missing on a fresh clone; CI cannot                                                           |
 | PostgreSQL `postgres:18` (Debian), port bound to `127.0.0.1`        | Latest stable major (19 is still RC); Debian matches typical glibc production hosts; the database is not exposed to the local network |
 | GitHub Actions pinned to commit SHAs (with a `# vX.Y.Z` comment)    | A tag can be moved to point at different code; a SHA cannot. Protects CI from a compromised action release                            |
+| MIT license (`LICENSE`, `"license": "MIT"`)                         | A public repo without a license is all rights reserved; MIT lets others reuse the template with attribution                           |
 | No Co-Authored-By trailer in commits                                | Maintainer's preference                                                                                                               |
 
 ## Follow-ups
