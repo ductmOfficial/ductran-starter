@@ -28,7 +28,7 @@
     "husky": "^9.1.7",
     "prettier": "^3.9.10",
     "turbo": "^2.11.9",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "prettier": "@repo/prettier-config",
   "license": "MIT"
