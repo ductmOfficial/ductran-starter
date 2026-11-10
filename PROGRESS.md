@@ -1,6 +1,6 @@
 # Progress
 
-> Last updated: 2026-11-09
+> Last updated: 2026-11-10
 >
 > Legend: ✅ done · 🔄 in progress · ⬜ not started
 
@@ -43,6 +43,7 @@ Steps 1–3 were pushed straight to `main`, then the ruleset was applied; every 
 | `@next/eslint-plugin-next` directly, not `eslint-config-next`       | The plugins bundled with `eslint-config-next` do not support ESLint 10 yet                                                           |
 | commitlint ignores Dependabot commits                               | Their bodies carry release notes with lines over the 100-character limit; headers already follow the configured prefixes             |
 | No Co-Authored-By trailer in commits                                | Maintainer's preference                                                                                                              |
+| Dependabot ignores TypeScript ≥6.1 and @types/node majors           | typescript-eslint supports TypeScript <6.1.0; Node types must match the Node 24 runtime                                              |
 
 ## Follow-ups
 
