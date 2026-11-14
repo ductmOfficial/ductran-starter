@@ -17,57 +17,7 @@ A TypeScript monorepo template for my portfolio projects. Every project starts f
 | CI          | GitHub Actions, protected `main` branch (ruleset), Dependabot                        |
 | Conventions | Conventional Commits (commitlint + husky), PR template, issue forms                  |
 
-## Requirements
-
-- Node.js 24 (`.nvmrc`; run `nvm use` or `fnm use`)
-- pnpm 12 (`npm install -g pnpm`; the exact version is pinned in `packageManager`)
-- Docker with Compose v2 (only for the database)
-
-`pnpm install` fails on a different Node major because `engineStrict` is enabled.
-
-## Getting started
-
-```bash
-git clone https://github.com/ductmOfficial/ductran-starter.git
-cd ductran-starter
-pnpm install          # also installs the git hooks
-
-pnpm build            # build all packages
-pnpm test             # run all tests
-```
-
-Local database (optional):
-
-```bash
-cp .env.example .env  # optional: compose.yaml has the same defaults
-pnpm db:up            # start PostgreSQL and wait until it is healthy
-pnpm db:psql          # open psql inside the container
-```
-
-Connection string: `postgresql://postgres:postgres@localhost:5432/app` (development only).
-
-## Scripts
-
-Run from the repository root.
-
-| Script               | What it does                                                     |
-| -------------------- | ---------------------------------------------------------------- |
-| `pnpm build`         | Build every package (`turbo run build`)                          |
-| `pnpm lint`          | ESLint in every package; warnings fail the run                   |
-| `pnpm typecheck`     | `tsc --noEmit` in every package                                  |
-| `pnpm test`          | Vitest in every package                                          |
-| `pnpm test:coverage` | Tests with coverage; HTML report in `packages/*/coverage/`       |
-| `pnpm format`        | Format the whole repo with Prettier                              |
-| `pnpm format:check`  | Check formatting without writing (used by CI)                    |
-| `pnpm db:up`         | Start PostgreSQL in the background and wait until it is healthy  |
-| `pnpm db:down`       | Stop PostgreSQL, keep the data                                   |
-| `pnpm db:reset`      | Stop PostgreSQL and delete all data                              |
-| `pnpm db:logs`       | Follow the PostgreSQL logs                                       |
-| `pnpm db:psql`       | Open `psql` in the container; extra arguments are passed through |
-
-Run a script in one package with a filter, e.g. `pnpm --filter @repo/ui test:watch`.
-
-## Project structure
+## Structure
 
 ```
 .
@@ -90,6 +40,124 @@ Run a script in one package with a filter, e.g. `pnpm --filter @repo/ui test:wat
 ├── pnpm-workspace.yaml
 └── PROGRESS.md                 # build log: steps, decisions, issues
 ```
+
+## Setup
+
+### 1. Prerequisites
+
+| Tool                   | Version                    | Needed for        | Install                                                        |
+| ---------------------- | -------------------------- | ----------------- | -------------------------------------------------------------- |
+| Node.js                | 24 (`.nvmrc`)              | everything        | `nvm install && nvm use` (or `fnm use`)                        |
+| pnpm                   | 12.14.0 (`packageManager`) | everything        | `corepack enable` (or `npm install -g pnpm@12.14.0`)           |
+| Git                    | any recent                 | everything        |                                                                |
+| Docker with Compose v2 | any recent                 | the database only | [Docker Desktop](https://docs.docker.com/desktop/) or OrbStack |
+
+`pnpm install` refuses other Node.js majors (`engineStrict`). Corepack ships with Node.js 24: after `corepack enable`, the first `pnpm` command downloads the exact version from `packageManager` (answer `Y` if it asks).
+
+There are no browser tests in the template, so Playwright is not needed.
+
+### 2. Clone and install
+
+```bash
+git clone https://github.com/ductmOfficial/ductran-starter.git
+cd ductran-starter
+nvm use
+corepack enable
+pnpm install          # also installs the commit-msg hook
+```
+
+### 3. Configure (optional)
+
+Only the local database reads environment variables, and `compose.yaml` already has the same defaults, so this step is optional:
+
+```bash
+cp .env.example .env
+```
+
+`.env` and `.env.*` are ignored by git; only `.env.example` is committed.
+
+| Variable            | Required | Default                                             | What it does                                                      |
+| ------------------- | -------- | --------------------------------------------------- | ----------------------------------------------------------------- |
+| `POSTGRES_USER`     | no       | `postgres`                                          | Superuser created in the container                                |
+| `POSTGRES_PASSWORD` | no       | `postgres`                                          | Its password (local development only)                             |
+| `POSTGRES_DB`       | no       | `app`                                               | Database created on first start                                   |
+| `POSTGRES_PORT`     | no       | `5432`                                              | Port published on `127.0.0.1`                                     |
+| `DATABASE_URL`      | no       | `postgresql://postgres:postgres@localhost:5432/app` | Connection string for apps; keep it in sync with the values above |
+
+These credentials are for the container on your machine; never reuse them in production.
+
+## Running
+
+### Build the packages
+
+```bash
+pnpm build
+```
+
+The template has no app yet, so there is no dev server. `pnpm dev` runs every package's `dev` task; in `@repo/ui` that is `vite build --watch`, which rebuilds `dist/` on every change. Stop it with `Ctrl+C`.
+
+### Local database
+
+```bash
+pnpm db:up            # start PostgreSQL and wait until it is healthy
+pnpm db:psql          # open psql inside the container
+pnpm db:psql -c "select version();"   # extra arguments are passed through
+pnpm db:down          # stop it, keep the data
+```
+
+Connection string: `postgresql://postgres:postgres@localhost:5432/app` (development only). There are no migrations or seed data in the template.
+
+## Testing
+
+| Command                             | What it runs                                               |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `pnpm test`                         | Vitest in every package                                    |
+| `pnpm test:coverage`                | Tests with coverage; HTML report in `packages/*/coverage/` |
+| `pnpm lint` / `pnpm typecheck`      | ESLint (warnings fail) and `tsc --noEmit` everywhere       |
+| `pnpm format:check` / `pnpm format` | Prettier check / write                                     |
+| `pnpm build`                        | Build every package                                        |
+
+To run what CI runs before opening a pull request:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm format:check
+pnpm turbo run lint typecheck test build
+```
+
+Run a script in one package with a filter, e.g. `pnpm --filter @repo/ui test:watch`.
+
+### All scripts
+
+Run from the repository root.
+
+| Script               | What it does                                                     |
+| -------------------- | ---------------------------------------------------------------- |
+| `pnpm build`         | Build every package (`turbo run build`)                          |
+| `pnpm dev`           | Every package's `dev` task (`turbo run dev`)                     |
+| `pnpm lint`          | ESLint in every package; warnings fail the run                   |
+| `pnpm typecheck`     | `tsc --noEmit` in every package                                  |
+| `pnpm test`          | Vitest in every package                                          |
+| `pnpm test:coverage` | Tests with coverage; HTML report in `packages/*/coverage/`       |
+| `pnpm format`        | Format the whole repo with Prettier                              |
+| `pnpm format:check`  | Check formatting without writing (used by CI)                    |
+| `pnpm db:up`         | Start PostgreSQL in the background and wait until it is healthy  |
+| `pnpm db:down`       | Stop PostgreSQL, keep the data                                   |
+| `pnpm db:reset`      | Stop PostgreSQL and delete all data                              |
+| `pnpm db:logs`       | Follow the PostgreSQL logs                                       |
+| `pnpm db:psql`       | Open `psql` in the container; extra arguments are passed through |
+
+## Troubleshooting
+
+| Symptom                                                      | Fix                                                                                                               |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `pnpm install` fails with `ERR_PNPM_UNSUPPORTED_ENGINE`      | Wrong Node.js major: `nvm use` (Node.js 24), then install again                                                   |
+| `pnpm: command not found`, or a different pnpm version runs  | `corepack enable`, then open a new terminal; `pnpm -v` should print `12.14.0`                                     |
+| `pnpm db:up` fails with "port is already allocated"          | Another PostgreSQL uses 5432: set `POSTGRES_PORT=5433` in `.env` and change the port in `DATABASE_URL`            |
+| `pnpm db:up` cannot connect to the Docker daemon             | Start Docker Desktop (or OrbStack) first                                                                          |
+| A machine with little memory kills the build (exit code 137) | Run fewer tasks at once: `pnpm turbo run lint typecheck test build --concurrency=2`                               |
+| An app cannot resolve `@repo/ui`                             | Run `pnpm build` once: packages are imported from their `dist/` output                                            |
+| The commit is rejected                                       | The hook enforces [Conventional Commits](https://www.conventionalcommits.org): `feat(ui): …`, `fix: …`, `docs: …` |
 
 ## How it works
 
